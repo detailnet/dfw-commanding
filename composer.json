@@ -1,5 +1,5 @@
 {
-    "name": "detailnet/dfw-normalization",
+    "name": "detailnet/dfw-commanding",
     "description": "DETAIL Framework library that implements the command pattern",
     "type": "library",
     "keywords": [
