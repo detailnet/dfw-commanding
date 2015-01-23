@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Core\Commanding\Command;
+namespace Detail\Commanding\Command;
 
 abstract class ListCommand implements
     CommandInterface

@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Core\Commanding;
+namespace Detail\Commanding;
 
-use Application\Core\Commanding\Command\CommandInterface;
+use Detail\Commanding\Command\CommandInterface;
 
 interface CommandDispatcherInterface
 {

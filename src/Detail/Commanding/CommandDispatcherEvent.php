@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Core\Commanding;
+namespace Detail\Commanding;
 
 use Zend\EventManager\Event;
 //use Zend\Stdlib\Parameters;

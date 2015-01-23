@@ -1,10 +1,10 @@
 <?php
 
-namespace Application\Core\Commanding\Service;
+namespace Detail\Commanding\Service;
 
-use Application\Core\Commanding\Command\CommandInterface;
-use Application\Core\Commanding\CommandDispatcherInterface;
-use Application\Core\Exception\RuntimeException;
+use Detail\Commanding\Command\CommandInterface;
+use Detail\Commanding\CommandDispatcherInterface;
+use Detail\Commanding\Exception;
 
 trait CommandDispatcherAwareTrait
 {
@@ -34,7 +34,7 @@ trait CommandDispatcherAwareTrait
         $commandDispatcher = $this->getCommands();
 
         if ($commandDispatcher === null) {
-            throw new RuntimeException(
+            throw new Exception\RuntimeException(
                 'A command dispatcher needs to be injected before commands can be handled'
             );
         }

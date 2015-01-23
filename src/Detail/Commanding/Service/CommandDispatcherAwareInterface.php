@@ -1,8 +1,8 @@
 <?php
 
-namespace Application\Core\Commanding\Service;
+namespace Detail\Commanding\Service;
 
-use Application\Core\Commanding\CommandDispatcherInterface;
+use Detail\Commanding\CommandDispatcherInterface;
 
 interface CommandDispatcherAwareInterface
 {

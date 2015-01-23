@@ -1,6 +1,6 @@
 <?php
 
-namespace Application\Core\Commanding;
+namespace Detail\Commanding;
 
 use ArrayObject;
 
@@ -8,9 +8,9 @@ use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 
-use Application\Core\Commanding\Command\CommandInterface;
-use Application\Core\Commanding\Handler\CommandHandlerInterface;
-use Application\Core\Exception\RuntimeException;
+use Detail\Commanding\Command\CommandInterface;
+use Detail\Commanding\Handler\CommandHandlerInterface;
+use Detail\Commanding\Exception;
 
 class CommandDispatcher implements
     CommandDispatcherInterface
@@ -106,7 +106,7 @@ class CommandDispatcher implements
         $commandName = $this->getCommandName($command);
 
         if (!$this->commandHandlers->has($commandName)) {
-            throw new RuntimeException(
+            throw new Exception\RuntimeException(
                 sprintf('No handler registered for command "%s"', $commandName)
             );
         }

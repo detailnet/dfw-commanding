@@ -1,9 +1,9 @@
 <?php
 
-namespace Application\Core\Commanding\Handler;
+namespace Detail\Commanding\Handler;
 
-use Application\Core\Commanding\Command\CommandInterface;
-use Application\Core\Exception;
+use Detail\Commanding\Command\CommandInterface;
+use Detail\Commanding\Exception;
 
 abstract class BaseCommandHandler implements
     CommandHandlerInterface

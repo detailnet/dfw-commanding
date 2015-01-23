@@ -1,11 +1,11 @@
 <?php
 
-namespace Application\Core\Commanding;
+namespace Detail\Commanding;
 
 use Zend\ServiceManager\AbstractPluginManager;
 
-use Application\Core\Commanding\Handler\CommandHandlerInterface;
-use Application\Core\Exception;
+use Detail\Commanding\Handler\CommandHandlerInterface;
+use Detail\Commanding\Exception;
 
 /**
  * Plugin manager implementation for command handlers.
