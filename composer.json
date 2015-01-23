@@ -1,0 +1,57 @@
+{
+    "name": "detailnet/dfw-normalization",
+    "description": "DETAIL Framework library that implements the command pattern",
+    "type": "library",
+    "keywords": [
+        "dfw",
+        "detailnet",
+        "commanding",
+        "bus",
+        "dispatcher"
+    ],
+    "homepage": "https://github.com/detailnet/dfw-commanding/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivan Wolf",
+            "email": "ivan.wolf@detailnet.ch"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "psr/log": "~1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.4.0",
+        "squizlabs/php_codesniffer" : "~2.0.0",
+        "phpmd/phpmd": "~2.1.3",
+        "satooshi/php-coveralls": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Detail\\Commanding\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "DetailTest\\Commanding\\": "tests/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.x-dev"
+        }
+    },
+    "archive": {
+        "exclude": [
+            "!vendor",
+            "tests",
+            "*phpunit.xml",
+            ".coveralls.yml",
+            ".travis.yml",
+            "build.xml",
+            "build.properties",
+            "composer.phar"
+        ]
+    }
+}
