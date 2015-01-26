@@ -8,12 +8,12 @@ abstract class ListCommand implements
     /**
      * @var array
      */
-    protected $criteria;
+    protected $criteria = array();
 
     /**
      * @var array
      */
-    protected $orderBy;
+    protected $orderBy = array();
 
     /**
      * @var int
