@@ -2,7 +2,7 @@
 
 namespace Detail\Commanding\Exception;
 
-class RuntimeException extends \RuntimeException implements
+class BadMethodCallException extends \BadMethodCallException implements
     ExceptionInterface
 {
 }
