@@ -49,7 +49,7 @@ abstract class GenericCommand implements
         }
 
         // Check if the params are all accepted before setting
-        foreach ($params as $key => $value) {
+        foreach (array_keys($params) as $key) {
             $this->acceptsParam($key);
         }
 

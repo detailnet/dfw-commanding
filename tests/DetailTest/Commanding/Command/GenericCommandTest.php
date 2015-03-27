@@ -5,7 +5,6 @@ namespace DetailTest\Commanding\Command;
 use PHPUnit_Framework_TestCase as TestCase;
 
 use Detail\Commanding\Command\GenericCommand;
-use Detail\Commanding\Exception;
 
 class GenericCommandTest extends TestCase
 {
@@ -49,7 +48,7 @@ class GenericCommandTest extends TestCase
 
     public function testNonArrayLeadsToException()
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
+        $this->setExpectedException('Detail\Commanding\Exception\InvalidArgumentException');
 
         /** @var GenericCommand $command */
         $command = $this->getCommand();
@@ -58,7 +57,7 @@ class GenericCommandTest extends TestCase
 
     public function testNotGetterOrSetterLeadsToException()
     {
-        $this->setExpectedException(Exception\BadMethodCallException::CLASS);
+        $this->setExpectedException('Detail\Commanding\Exception\BadMethodCallException');
 
         /** @var GenericCommand $command */
         $command = $this->getCommand();
@@ -67,7 +66,7 @@ class GenericCommandTest extends TestCase
 
     public function testUnsupportedParamLeadsToException()
     {
-        $this->setExpectedException(Exception\InvalidArgumentException::CLASS);
+        $this->setExpectedException('Detail\Commanding\Exception\InvalidArgumentException');
 
         /** @var GenericCommand $command */
         $command = $this->getCommand();
