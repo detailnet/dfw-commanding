@@ -4,7 +4,6 @@ namespace Detail\Commanding\Command;
 
 //use ArrayAccess;
 use ReflectionObject;
-use ReflectionProperty;
 use Traversable;
 
 use Detail\Commanding\Exception;
@@ -15,11 +14,6 @@ abstract class GenericCommand implements
 {
     const CALL_GET = 'get';
     const CALL_SET = 'set';
-
-//    /**
-//     * @var array
-//     */
-//    protected $params = array();
 
     /**
      * The params the we're actually set/modified.
@@ -59,8 +53,15 @@ abstract class GenericCommand implements
             );
         }
 
-        // Check if the params are all accepted...
+        $sanitizedParams = array();
+
+        // First we need to sanitize the params
         foreach ($params as $key => $value) {
+            $sanitizedParams[$this->sanitizeParamKey($key)] = $value;
+        }
+
+        // Check if the params are all accepted...
+        foreach ($sanitizedParams as $key => $value) {
             $this->acceptsParam($key);
         }
 
@@ -71,8 +72,8 @@ abstract class GenericCommand implements
 
         $this->modifiedParams = array();
 
-        // ...and actually setting the new values
-        foreach ($params as $key => $value) {
+        // ...and actually setting the new values.
+        foreach ($sanitizedParams as $key => $value) {
             $this->setParam($key, $value);
         }
     }
@@ -97,6 +98,8 @@ abstract class GenericCommand implements
      */
     public function setParam($key, $value)
     {
+        $key = $this->sanitizeParamKey($key);
+
         $this->acceptsParam($key);
 
         $property = $this->getPropertyName($key);
@@ -220,19 +223,54 @@ abstract class GenericCommand implements
      * @param string $camelCaseKey
      * @return string
      */
-    private function getParamKey($camelCaseKey)
+    private function sanitizeParamKey($camelCaseKey)
     {
         $key = ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $camelCaseKey)), '_');
+        $key = preg_replace('/[_]+/', '_', $key);
+        $key = ltrim($key, '_');
+        $key = rtrim($key, '_');
 
         return $key;
     }
 
+    /**
+     * Get param name/key name (which is snake_case) for a given property name (which is camelCase).
+     *
+     * Note that the returned name/key will be sanitized.
+     *
+     * @param string $camelCaseKey
+     * @return string
+     */
+    private function getParamKey($camelCaseKey)
+    {
+        // Sanitizing already takes care of the camelCase to snake_case formatting
+        $key = $this->sanitizeParamKey($camelCaseKey);
+
+        return $key;
+    }
+
+    /**
+     * @param string $snakeCaseKey
+     * @return string
+     */
+    private function sanitizePropertyName($snakeCaseKey)
+    {
+        $key = str_replace('_', '', $snakeCaseKey);
+
+        return $key;
+    }
+
+    /**
+     * Get property name (which is camelCase) for a given param name/key (which is snake_case).
+     *
+     * Note that we expect the param name/key to be sanitized already.
+     *
+     * @param string $snakeCaseKey
+     * @return mixed|string
+     */
     private function getPropertyName($snakeCaseKey)
     {
         $key = str_replace(' ', '', ucwords(str_replace('_', ' ', $snakeCaseKey)));
-
-        // Keep the first char as is...
-        $key = $snakeCaseKey[0] . substr($key, 1);
 
         return $key;
     }
@@ -266,7 +304,7 @@ abstract class GenericCommand implements
     {
         if (strlen($key) === 0) {
             throw new Exception\InvalidArgumentException(
-                'Invalid param key; must be a non empty string'
+                'Invalid param key; must be a non-empty string'
             );
         }
 
@@ -295,10 +333,27 @@ abstract class GenericCommand implements
 
         // Note that we don't care about the visibility of a property (public, protected or private)
         foreach ($command->getProperties() as $property) {
+            $propertyName = $property->getName();
+
             // Ignore properties starting with "__" because they're usually internal properties
             // we're not interested in...
-            if (strpos($property->getName(), '__') === 0) {
+            if (strpos($propertyName, '__') === 0) {
                 continue;
+            }
+
+            $sanitizedPropertyName = $this->sanitizePropertyName($propertyName);
+
+            if ($sanitizedPropertyName !== $propertyName
+                || in_array($propertyName, array('param', 'params', 'fromArray'))
+            ) {
+                throw new Exception\RuntimeException(
+                    sprintf(
+                        'Command %s does not support property "%s"; sanitized name is "%s"',
+                        get_class($this),
+                        $propertyName,
+                        $sanitizedPropertyName
+                    )
+                );
             }
 
             $keys[] = $this->getParamKey($property->getName());
