@@ -217,7 +217,7 @@ class GenericCommandTest extends TestCase
      */
     protected function getCommand($properties = array())
     {
-        $command = $this->getMockBuilder(GenericCommand::CLASS)
+        $command = $this->getMockBuilder('Detail\Commanding\Command\GenericCommand')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
