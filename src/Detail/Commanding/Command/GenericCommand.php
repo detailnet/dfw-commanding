@@ -3,6 +3,8 @@
 namespace Detail\Commanding\Command;
 
 //use ArrayAccess;
+use ReflectionObject;
+use ReflectionProperty;
 use Traversable;
 
 use Detail\Commanding\Exception;
@@ -14,15 +16,24 @@ abstract class GenericCommand implements
     const CALL_GET = 'get';
     const CALL_SET = 'set';
 
-    /**
-     * @var array
-     */
-    protected $params = array();
+//    /**
+//     * @var array
+//     */
+//    protected $params = array();
 
     /**
+     * The params the we're actually set/modified.
+     *
      * @var array
      */
-    protected $acceptedParams = array();
+    private $modifiedParams = array();
+
+    /**
+     * The snake case names/keys of the accepted params.
+     *
+     * @var array
+     */
+    private $acceptedParams;
 
     /**
      * @param array|Traversable|null $params
@@ -48,13 +59,22 @@ abstract class GenericCommand implements
             );
         }
 
-        // Check if the params are all accepted before setting
+        // Check if the params are all accepted...
         foreach ($params as $key => $value) {
             $this->acceptsParam($key);
         }
 
-        // Replace all params
-        $this->params = $params;
+        // ...before resetting...
+        foreach ($this->getAcceptedParams() as $key) {
+            $this->setParam($key, null);
+        }
+
+        $this->modifiedParams = array();
+
+        // ...and actually setting the new values
+        foreach ($params as $key => $value) {
+            $this->setParam($key, $value);
+        }
     }
 
     /**
@@ -62,7 +82,40 @@ abstract class GenericCommand implements
      */
     public function getParams()
     {
-        return $this->params;
+        $params = array();
+
+        foreach ($this->getModifiedParams() as $key) {
+            $params[$key] = $this->getParam($key);
+        }
+
+        return $params;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function setParam($key, $value)
+    {
+        $this->acceptsParam($key);
+
+        $property = $this->getPropertyName($key);
+
+        $this->$property = $value;
+        $this->modifiedParams[] = $key;
+    }
+
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
+    public function getParam($key)
+    {
+        $this->acceptsParam($key);
+
+        $property = $this->getPropertyName($key);
+
+        return in_array($key, $this->modifiedParams) ? $this->$property : null;
     }
 
     /**
@@ -125,13 +178,29 @@ abstract class GenericCommand implements
             throw new Exception\BadMethodCallException(
                 sprintf(
                     'Method %s does not exist',
-                    __METHOD__
+                    $name
                 )
             );
         }
 
-        // Transform the key to snake case and check if the commands accepts it.
+        // Get the snake case key
         $key = $this->getParamKey($camelCaseKey);
+
+        // Check if the commands accepts the param
+        try {
+            $this->acceptsParam($key);
+        } catch (Exception\InvalidArgumentException $e) {
+            throw new Exception\BadMethodCallException(
+                sprintf(
+                    'Method %s does not exist',
+                    $name
+                ),
+                0,
+                $e
+            );
+        }
+
+        // Transform the key to snake case and check if the commands accepts it.
         $result = null;
 
         switch ($supportedMethod) {
@@ -140,7 +209,7 @@ abstract class GenericCommand implements
                 break;
             case self::CALL_SET:
                 // We expect the value to be the first argument
-                $this->params[$key] = current($arguments);
+                $this->setParam($key, current($arguments));
                 break;
         }
 
@@ -148,32 +217,44 @@ abstract class GenericCommand implements
     }
 
     /**
-     * @return array
-     */
-    protected function getAcceptedParams()
-    {
-        return $this->acceptedParams;
-    }
-
-    /**
      * @param string $camelCaseKey
      * @return string
      */
-    protected function getParamKey($camelCaseKey)
+    private function getParamKey($camelCaseKey)
     {
         $key = ltrim(strtolower(preg_replace('/[A-Z]/', '_$0', $camelCaseKey)), '_');
-        $this->acceptsParam($key);
+
+        return $key;
+    }
+
+    private function getPropertyName($snakeCaseKey)
+    {
+        $key = str_replace(' ', '', ucwords(str_replace('_', ' ', $snakeCaseKey)));
+
+        // Keep the first char as is...
+        $key = $snakeCaseKey[0] . substr($key, 1);
 
         return $key;
     }
 
     /**
-     * @param string $key
-     * @return mixed|null
+     * @return array
      */
-    protected function getParam($key)
+    private function getModifiedParams()
     {
-        return array_key_exists($key, $this->params) ? $this->params[$key] : null;
+        return $this->modifiedParams;
+    }
+
+    /**
+     * @return array
+     */
+    private function getAcceptedParams()
+    {
+        if ($this->acceptedParams === null) {
+            $this->initAcceptedParams();
+        }
+
+        return $this->acceptedParams;
     }
 
     /**
@@ -181,8 +262,14 @@ abstract class GenericCommand implements
      * @param bool $throwExceptionWhenNotAccepted
      * @return bool
      */
-    protected function acceptsParam($key, $throwExceptionWhenNotAccepted = true)
+    private function acceptsParam($key, $throwExceptionWhenNotAccepted = true)
     {
+        if (strlen($key) === 0) {
+            throw new Exception\InvalidArgumentException(
+                'Invalid param key; must be a non empty string'
+            );
+        }
+
         $acceptsParam = in_array($key, $this->getAcceptedParams());
 
         if ($acceptsParam !== true && $throwExceptionWhenNotAccepted !== false) {
@@ -196,5 +283,27 @@ abstract class GenericCommand implements
         }
 
         return $acceptsParam;
+    }
+
+    /**
+     * @return void
+     */
+    private function initAcceptedParams()
+    {
+        $command = new ReflectionObject($this);
+        $keys = array();
+
+        // Note that we don't care about the visibility of a property (public, protected or private)
+        foreach ($command->getProperties() as $property) {
+            // Ignore properties starting with "__" because they're usually internal properties
+            // we're not interested in...
+            if (strpos($property->getName(), '__') === 0) {
+                continue;
+            }
+
+            $keys[] = $this->getParamKey($property->getName());
+        }
+
+        $this->acceptedParams = $keys;
     }
 }

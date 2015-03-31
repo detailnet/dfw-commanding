@@ -6,6 +6,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 
 use Detail\Commanding\Command\GenericCommand;
 use Detail\Commanding\Exception;
+use ReflectionObject;
 
 class GenericCommandTest extends TestCase
 {
@@ -82,13 +83,30 @@ class GenericCommandTest extends TestCase
     {
         $command = $this->getMockBuilder(GenericCommand::CLASS)
             ->disableOriginalConstructor()
-            ->setMethods(array('getAcceptedParams'))
+//            ->setMethods(array('getAcceptedParams'))
             ->getMockForAbstractClass();
 
-        $command
-            ->expects($this->any())
-            ->method('getAcceptedParams')
-            ->will($this->returnValue($acceptedParams));
+//        $class = new ReflectionObject($command);
+
+        // Initialize as properties and make protected
+        foreach ($acceptedParams as $acceptedParam) {
+            $command->$acceptedParam = null;
+//            $property = $class->getProperty($acceptedParam);
+//            $property->setAccessible(false);
+        }
+
+        //
+
+//        foreach ($acceptedParams as $acceptedParam) {
+//            $command->$acceptedParam = null;
+//        }
+
+//        var_dump($command);
+
+//        $command
+//            ->expects($this->any())
+//            ->method('getAcceptedParams')
+//            ->will($this->returnValue($acceptedParams));
 
         return $command;
     }
