@@ -221,7 +221,7 @@ class GenericCommandTest extends TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        // Initialize as properties and make protected
+        // Initialize properties
         foreach ($properties as $property) {
             $command->$property = null;
         }
