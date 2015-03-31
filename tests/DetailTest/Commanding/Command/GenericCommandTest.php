@@ -5,7 +5,6 @@ namespace DetailTest\Commanding\Command;
 use PHPUnit_Framework_TestCase as TestCase;
 
 use Detail\Commanding\Command\GenericCommand;
-use Detail\Commanding\Exception;
 
 class GenericCommandTest extends TestCase
 {
