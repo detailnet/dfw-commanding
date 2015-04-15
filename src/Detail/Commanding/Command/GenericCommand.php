@@ -4,6 +4,7 @@ namespace Detail\Commanding\Command;
 
 //use ArrayAccess;
 use ReflectionObject;
+use ReflectionProperty;
 use Traversable;
 
 use Detail\Commanding\Exception;
@@ -270,7 +271,12 @@ abstract class GenericCommand implements
      */
     private function getPropertyName($snakeCaseKey)
     {
+        if (strlen($snakeCaseKey) === 0) {
+            return $snakeCaseKey;
+        }
+
         $key = str_replace(' ', '', ucwords(str_replace('_', ' ', $snakeCaseKey)));
+        $key = $snakeCaseKey[0] . substr($key, 1); // Keep first character as is...
 
         return $key;
     }
@@ -331,8 +337,12 @@ abstract class GenericCommand implements
         $command = new ReflectionObject($this);
         $keys = array();
 
-        // Note that we don't care about the visibility of a property (public, protected or private)
-        foreach ($command->getProperties() as $property) {
+        // We're ignoring private properties because we can't set a for it value anyway...
+        $properties = $command->getProperties(
+            ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED
+        );
+
+        foreach ($properties as $property) {
             $propertyName = $property->getName();
 
             // Ignore properties starting with "__" because they're usually internal properties
