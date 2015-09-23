@@ -20,5 +20,5 @@ interface CollectionCommandInterface
      * Set the data for the collection
      * @param object[] $data
      */
-    public function setCollectionData($data = array());
+    public function setCollectionData(array $data = array());
 }
