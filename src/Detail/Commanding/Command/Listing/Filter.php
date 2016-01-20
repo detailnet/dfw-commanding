@@ -42,7 +42,6 @@ class Filter
     public function __construct($property, $value, $operator = null, $type = null)
     {
         $this->setProperty($property);
-        $this->setValue($value);
 
         if ($operator !== null) {
             $this->setOperator($operator);
@@ -51,6 +50,9 @@ class Filter
         if ($type !== null) {
             $this->setType($type);
         }
+
+        // Has to be done after the type has been set (if any)
+        $this->setValue($value);
     }
 
     /**
@@ -98,7 +100,7 @@ class Filter
      */
     public function setValue($value)
     {
-        $this->value = $value;
+        $this->value = $this->castToType($value);
     }
 
     /**
@@ -115,5 +117,38 @@ class Filter
     public function setType($type)
     {
         $this->type = $type;
+    }
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function castToType($value)
+    {
+        /** @todo Could use http://php.net/manual/en/function.settype.php */
+
+        // Could not find what the best practice is to convert to a specific type between
+        // using an XXXval() function (e.g. 'boolval()', 'intval()', 'floatval()', ...)
+        // or use typecasting
+
+        switch ($this->getType()) {
+            case 'bool':
+            case 'boolean':
+                return (boolean) $value;
+            case 'int':
+            case 'digit':
+            case 'integer':
+                return (integer) $value;
+            case 'float':
+            case 'decimal':
+            case 'double':
+                return (float) $value;
+            case 'str':
+            case 'string':
+                return (string) $value;
+            case 'array':
+            default:
+                return $value;
+        }
     }
 }
