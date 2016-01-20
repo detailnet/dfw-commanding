@@ -125,30 +125,20 @@ class Filter
      */
     protected function castToType($value)
     {
-        /** @todo Could use http://php.net/manual/en/function.settype.php */
+        $typesMapping = array(
+            'boolean' => array('bool', 'boolean'),
+            'integer' => array('int', 'digit', 'integer'),
+            'float' => array('float', 'decimal', 'double', 'real'),
+            'string' => array('str', 'string', 'uuid'),
+            'array' => array('array', 'hash'),
+        );
 
-        // Could not find what the best practice is to convert to a specific type between
-        // using an XXXval() function (e.g. 'boolval()', 'intval()', 'floatval()', ...)
-        // or use typecasting
-
-        switch ($this->getType()) {
-            case 'bool':
-            case 'boolean':
-                return (boolean) $value;
-            case 'int':
-            case 'digit':
-            case 'integer':
-                return (integer) $value;
-            case 'float':
-            case 'decimal':
-            case 'double':
-                return (float) $value;
-            case 'str':
-            case 'string':
-                return (string) $value;
-            case 'array':
-            default:
-                return $value;
+        foreach ($typesMapping as $typeToSet => $mapping) {
+            if (in_array($this->getType(), $mapping)) {
+                settype($value, $typeToSet);
+            }
         }
+
+        return $value;
     }
 }
