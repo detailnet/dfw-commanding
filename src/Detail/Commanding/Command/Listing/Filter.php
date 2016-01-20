@@ -34,6 +34,20 @@ class Filter
     protected $type = 'string';
 
     /**
+     * @return array
+     */
+    protected static function getSupportedTypes()
+    {
+        return array(
+            'boolean' => array('bool', 'boolean'),
+            'integer' => array('int', 'digit', 'integer'),
+            'float' => array('float', 'decimal', 'double', 'real'),
+            'string' => array('str', 'string', 'uuid'),
+            'array' => array('array', 'hash'),
+        );
+    }
+
+    /**
      * @param string $property
      * @param mixed $value
      * @param string $operator
@@ -112,33 +126,26 @@ class Filter
     }
 
     /**
-     * @param string $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
      * @param mixed $value
      * @return mixed
      */
     protected function castToType($value)
     {
-        $typesMapping = array(
-            'boolean' => array('bool', 'boolean'),
-            'integer' => array('int', 'digit', 'integer'),
-            'float' => array('float', 'decimal', 'double', 'real'),
-            'string' => array('str', 'string', 'uuid'),
-            'array' => array('array', 'hash'),
-        );
-
-        foreach ($typesMapping as $typeToSet => $mapping) {
+        foreach (static::getSupportedTypes() as $typeToSet => $mapping) {
             if (in_array($this->getType(), $mapping)) {
                 settype($value, $typeToSet);
             }
         }
 
         return $value;
+    }
+
+    /**
+     * @param string $type
+     */
+    private function setType($type)
+    {
+        /** @todo Check that is one of the supported types first? */
+        $this->type = $type;
     }
 }
