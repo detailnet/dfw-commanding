@@ -31,7 +31,7 @@ class Filter
     /**
      * @var string
      */
-    protected $type = 'string';
+    protected $type;
 
     /**
      * @return array
