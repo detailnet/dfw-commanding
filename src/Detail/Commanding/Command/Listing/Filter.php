@@ -56,17 +56,11 @@ class Filter
     public function __construct($property, $value, $operator = null, $type = null)
     {
         $this->setProperty($property);
+        $this->setValue($value, $type);
 
         if ($operator !== null) {
             $this->setOperator($operator);
         }
-
-        if ($type !== null) {
-            $this->setType($type);
-        }
-
-        // Has to be done after the type has been set (if any)
-        $this->setValue($value);
     }
 
     /**
@@ -111,9 +105,15 @@ class Filter
 
     /**
      * @param mixed $value
+     * @param string $type
      */
-    public function setValue($value)
+    public function setValue($value, $type = null)
     {
+        if ($type !== null) {
+            $this->setType($type);
+        }
+
+        // Has to be done after the type has been set (if any)
         $this->value = $this->castToType($value);
     }
 
