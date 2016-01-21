@@ -2,6 +2,8 @@
 
 namespace Detail\Commanding\Command\Listing;
 
+use Detail\Commanding\Exception;
+
 class Filter
 {
     const OPERATOR_SMALLER_THAN           = '<';
@@ -29,27 +31,37 @@ class Filter
     protected $value;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $type = 'string';
+    protected $type;
+
+    /**
+     * @return array
+     */
+    protected static function getSupportedTypes()
+    {
+        return array(
+            'boolean' => array('bool', 'boolean'),
+            'integer' => array('int', 'digit', 'integer'),
+            'float' => array('float', 'decimal', 'double', 'real'),
+            'string' => array('str', 'string', 'uuid'),
+            'array' => array('array', 'hash'),
+        );
+    }
 
     /**
      * @param string $property
      * @param mixed $value
-     * @param string $operator
-     * @param string $type
+     * @param string|null $operator
+     * @param string|null $type
      */
     public function __construct($property, $value, $operator = null, $type = null)
     {
         $this->setProperty($property);
-        $this->setValue($value);
+        $this->setValue($value, $type);
 
         if ($operator !== null) {
             $this->setOperator($operator);
-        }
-
-        if ($type !== null) {
-            $this->setType($type);
         }
     }
 
@@ -95,9 +107,20 @@ class Filter
 
     /**
      * @param mixed $value
+     * @param string|null $type
      */
-    public function setValue($value)
+    public function setValue($value, $type = null)
     {
+        if ($type !== null) {
+            $this->setType($type);
+        }
+
+        // If type is set cast value to it
+        if ($this->getType() !== null) {
+            // No need to check that getMainType result is not null
+            settype($value, $this->getMainType($this->getType()));
+        }
+
         $this->value = $value;
     }
 
@@ -110,10 +133,31 @@ class Filter
     }
 
     /**
+     * @param $type
+     * @return string|null
+     */
+    protected function getMainType($type)
+    {
+        foreach (static::getSupportedTypes() as $mainType => $mapping) {
+            if (in_array($type, $mapping)) {
+                return $mainType;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param string $type
      */
-    public function setType($type)
+    private function setType($type)
     {
+        if ($this->getMainType($type) === null) {
+            throw new Exception\InvalidArgumentException(
+                sprintf('Unsupported type "%s"', $type)
+            );
+        }
+
         $this->type = $type;
     }
 }
