@@ -8,24 +8,31 @@ use Detail\Commanding\Exception;
 abstract class SimpleCommandHandler implements
     CommandHandlerInterface
 {
+    /**
+     * @param CommandInterface $command
+     * @return mixed
+     */
     public function handle(CommandInterface $command)
     {
         $commandClass = $this->getCommandClass();
 
         if (!$command instanceof $commandClass) {
             throw new Exception\RuntimeException(
-                sprintf(
-                    'Plugin of type %s is invalid; must implement %s\CommandHandlerInterface',
-                    (is_object($command) ? get_class($command) : gettype($command)),
-                    __NAMESPACE__
-                )
+                sprintf('Handler only accepts commands of type %s', $commandClass)
             );
         }
 
         return $this->handleCommand($command);
     }
 
+    /**
+     * @param CommandInterface $command
+     * @return mixed
+     */
     abstract protected function handleCommand(CommandInterface $command);
 
+    /**
+     * @return string
+     */
     abstract protected function getCommandClass();
 }
