@@ -9,6 +9,6 @@ abstract class ExtendedCommandHandler extends SimpleCommandHandler implements
     CommandDispatcherAwareInterface
 {
     use CommandDispatcherAwareTrait {
-        handleCommand as dispatchCommand;
+        handleCommand as handleSubCommand;
     }
 }

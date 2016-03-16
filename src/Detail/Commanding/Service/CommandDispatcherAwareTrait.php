@@ -29,7 +29,11 @@ trait CommandDispatcherAwareTrait
         $this->commands = $commands;
     }
 
-    protected function handleCommand(CommandInterface $command)
+    /**
+     * @param CommandInterface $command
+     * @return mixed
+     */
+    protected function dispatchCommand(CommandInterface $command)
     {
         $commandDispatcher = $this->getCommands();
 
@@ -40,5 +44,15 @@ trait CommandDispatcherAwareTrait
         }
 
         return $commandDispatcher->handle($command);
+    }
+
+    /**
+     * @param CommandInterface $command
+     * @return mixed
+     * @deprecated Use dispatchCommand()
+     */
+    protected function handleCommand(CommandInterface $command)
+    {
+        return $this->dispatchCommand($command);
     }
 }
