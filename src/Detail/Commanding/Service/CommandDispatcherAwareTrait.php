@@ -43,7 +43,7 @@ trait CommandDispatcherAwareTrait
             );
         }
 
-        return $commandDispatcher->handle($command);
+        return $commandDispatcher->dispatch($command);
     }
 
     /**
