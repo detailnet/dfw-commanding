@@ -13,6 +13,7 @@ class Filter
     const OPERATOR_GREATER_THAN           = '>';
     const OPERATOR_NOT_EQUALS             = '!=';
     const OPERATOR_IN                     = 'in';
+    const OPERATOR_NOT_IN                 = 'notIn';
     const OPERATOR_LIKE                   = 'like';
 
     /**
