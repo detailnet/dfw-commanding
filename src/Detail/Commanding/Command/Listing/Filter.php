@@ -2,6 +2,9 @@
 
 namespace Detail\Commanding\Command\Listing;
 
+use DateTime;
+use DateTimeInterface;
+
 use Detail\Commanding\Exception;
 
 class Filter
@@ -47,6 +50,7 @@ class Filter
             'float' => array('float', 'decimal', 'double', 'real'),
             'string' => array('str', 'string', 'uuid'),
             'array' => array('array', 'hash'),
+            'date' => array('date', 'datetime'),
         );
     }
 
@@ -114,12 +118,23 @@ class Filter
     {
         if ($type !== null) {
             $this->setType($type);
+        } else {
+            $type = $this->getType();
         }
 
         // If type is set cast value to it
-        if ($this->getType() !== null) {
+        if ($type !== null) {
             // No need to check that getMainType result is not null
-            settype($value, $this->getMainType($this->getType()));
+            $mainType = $this->getMainType($this->getType());
+
+            if ($mainType == 'date') {
+                if (!$value instanceof DateTimeInterface) {
+                    $value = new DateTime($value);
+                }
+            } else {
+                // For scalars
+                settype($value, $this->getMainType($this->getType()));
+            }
         }
 
         $this->value = $value;
