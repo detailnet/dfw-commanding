@@ -2,6 +2,9 @@
 
 namespace Detail\Commanding\Command\Listing;
 
+use DateTime;
+use DateTimeInterface;
+
 use Detail\Commanding\Exception;
 
 class Filter
@@ -47,6 +50,7 @@ class Filter
             'float' => array('float', 'decimal', 'double', 'real'),
             'string' => array('str', 'string', 'uuid'),
             'array' => array('array', 'hash'),
+            'date' => array('date', 'datetime'),
         );
     }
 
@@ -113,13 +117,24 @@ class Filter
     public function setValue($value, $type = null)
     {
         if ($type !== null) {
-            $this->setType($type);
+            $this->setType($type, false);
+        } else {
+            $type = $this->getType();
         }
 
         // If type is set cast value to it
-        if ($this->getType() !== null) {
+        if ($type !== null) {
             // No need to check that getMainType result is not null
-            settype($value, $this->getMainType($this->getType()));
+            $mainType = $this->getMainType($this->getType());
+
+            if ($mainType == 'date') {
+                if (!$value instanceof DateTimeInterface) {
+                    $value = new DateTime($value);
+                }
+            } else {
+                // For scalars
+                settype($value, $this->getMainType($this->getType()));
+            }
         }
 
         $this->value = $value;
@@ -131,6 +146,25 @@ class Filter
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @param string|null $type
+     * @param boolean $castValue
+     */
+    public function setType($type, $castValue = true)
+    {
+        if ($this->getMainType($type) === null) {
+            throw new Exception\InvalidArgumentException(
+                sprintf('Unsupported type "%s"', $type)
+            );
+        }
+
+        if ($castValue !== false) {
+            $this->setValue($this->getValue(), $type);
+        } else {
+            $this->type = $type;
+        }
     }
 
     /**
@@ -146,19 +180,5 @@ class Filter
         }
 
         return null;
-    }
-
-    /**
-     * @param string $type
-     */
-    private function setType($type)
-    {
-        if ($this->getMainType($type) === null) {
-            throw new Exception\InvalidArgumentException(
-                sprintf('Unsupported type "%s"', $type)
-            );
-        }
-
-        $this->type = $type;
     }
 }
