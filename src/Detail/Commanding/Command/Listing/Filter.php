@@ -117,7 +117,7 @@ class Filter
     public function setValue($value, $type = null)
     {
         if ($type !== null) {
-            $this->setType($type);
+            $this->setType($type, false);
         } else {
             $type = $this->getType();
         }
@@ -149,6 +149,25 @@ class Filter
     }
 
     /**
+     * @param string|null $type
+     * @param boolean $castValue
+     */
+    public function setType($type, $castValue = true)
+    {
+        if ($this->getMainType($type) === null) {
+            throw new Exception\InvalidArgumentException(
+                sprintf('Unsupported type "%s"', $type)
+            );
+        }
+
+        if ($castValue !== false) {
+            $this->setValue($this->getValue(), $type);
+        } else {
+            $this->type = $type;
+        }
+    }
+
+    /**
      * @param $type
      * @return string|null
      */
@@ -161,19 +180,5 @@ class Filter
         }
 
         return null;
-    }
-
-    /**
-     * @param string $type
-     */
-    private function setType($type)
-    {
-        if ($this->getMainType($type) === null) {
-            throw new Exception\InvalidArgumentException(
-                sprintf('Unsupported type "%s"', $type)
-            );
-        }
-
-        $this->type = $type;
     }
 }
