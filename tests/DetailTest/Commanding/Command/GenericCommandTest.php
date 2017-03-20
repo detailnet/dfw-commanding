@@ -2,9 +2,10 @@
 
 namespace DetailTest\Commanding\Command;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 
 use Detail\Commanding\Command\GenericCommand;
+use Detail\Commanding\Exception;
 
 class GenericCommandTest extends TestCase
 {
@@ -154,7 +155,7 @@ class GenericCommandTest extends TestCase
      */
     public function testInvalidPropertyLeadsToException(array $params)
     {
-        $this->setExpectedException('Detail\Commanding\Exception\RuntimeException');
+        $this->expectException(Exception\RuntimeException::CLASS);
 
         $command = $this->getCommand($params);
         $command->setAnyParam();
@@ -162,7 +163,7 @@ class GenericCommandTest extends TestCase
 
     public function testNonArrayLeadsToException()
     {
-        $this->setExpectedException('Detail\Commanding\Exception\InvalidArgumentException');
+        $this->expectException(Exception\InvalidArgumentException::CLASS);
 
         /** @var GenericCommand $command */
         $command = $this->getCommand();
@@ -171,7 +172,7 @@ class GenericCommandTest extends TestCase
 
     public function testInvalidGetterLeadsToException()
     {
-        $this->setExpectedException('Detail\Commanding\Exception\BadMethodCallException');
+        $this->expectException(Exception\BadMethodCallException::CLASS);
 
         $command = $this->getCommand();
         $command->badMethod();
@@ -179,7 +180,7 @@ class GenericCommandTest extends TestCase
 
     public function testNotGetterLeadsToException()
     {
-        $this->setExpectedException('Detail\Commanding\Exception\BadMethodCallException');
+        $this->expectException(Exception\BadMethodCallException::CLASS);
 
         $command = $this->getCommand();
         $command->getUnsupportedParam();
@@ -187,7 +188,7 @@ class GenericCommandTest extends TestCase
 
     public function testNotSetterLeadsToException()
     {
-        $this->setExpectedException('Detail\Commanding\Exception\BadMethodCallException');
+        $this->expectException(Exception\BadMethodCallException::CLASS);
 
         $command = $this->getCommand();
         $command->setUnsupportedParam();
@@ -195,7 +196,7 @@ class GenericCommandTest extends TestCase
 
     public function testUnsupportedParamLeadsToException()
     {
-        $this->setExpectedException('Detail\Commanding\Exception\InvalidArgumentException');
+        $this->expectException(Exception\InvalidArgumentException::CLASS);
 
         /** @var GenericCommand $command */
         $command = $this->getCommand();
@@ -204,7 +205,7 @@ class GenericCommandTest extends TestCase
 
     public function testEmptyParamLeadsToException()
     {
-        $this->setExpectedException('Detail\Commanding\Exception\InvalidArgumentException');
+        $this->expectException(Exception\InvalidArgumentException::CLASS);
 
         /** @var GenericCommand $command */
         $command = $this->getCommand();
@@ -217,7 +218,7 @@ class GenericCommandTest extends TestCase
      */
     protected function getCommand($properties = array())
     {
-        $command = $this->getMockBuilder('Detail\Commanding\Command\GenericCommand')
+        $command = $this->getMockBuilder(GenericCommand::CLASS)
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
