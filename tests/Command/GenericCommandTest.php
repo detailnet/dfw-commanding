@@ -11,107 +11,107 @@ class GenericCommandTest extends TestCase
 {
     public function provideParams()
     {
-        return array(
-            array(
+        return [
+            [
                 'param' => 'param1',
                 'accepted_param' => 'param1',
                 'setter' => 'setParam1',
                 'getter' => 'getParam1',
                 'property' => 'param1',
-            ),
-            array(
+            ],
+            [
                 'param' => 'paramTwo',
                 'accepted_param' => 'param_two',
                 'setter' => 'setParamTwo',
                 'getter' => 'getParamTwo',
                 'property' => 'paramTwo',
-            ),
-            array(
+            ],
+            [
                 'param' => 'param_three',
                 'accepted_param' => 'param_three',
                 'setter' => 'setParamThree',
                 'getter' => 'getParamThree',
                 'property' => 'paramThree',
-            ),
-            array(
+            ],
+            [
                 'param' => 'param_Four',
                 'accepted_param' => 'param_four',
                 'setter' => 'setParamFour',
                 'getter' => 'getParamFour',
                 'property' => 'paramFour',
-            ),
-            array(
+            ],
+            [
                 'param' => '_param_five',
                 'accepted_param' => 'param_five',
                 'setter' => 'setParamFive',
                 'getter' => 'getParamFive',
                 'property' => 'paramFive',
-            ),
-            array(
+            ],
+            [
                 'param' => 'param_six_',
                 'accepted_param' => 'param_six',
                 'setter' => 'setParamSix',
                 'getter' => 'getParamSix',
                 'property' => 'paramSix',
-            ),
-            array(
+            ],
+            [
                 'param' => 'param__seven',
                 'accepted_param' => 'param_seven',
                 'setter' => 'setParamSeven',
                 'getter' => 'getParamSeven',
                 'property' => 'paramSeven',
-            ),
-            array(
+            ],
+            [
                 'param' => 'param__Eight',
                 'accepted_param' => 'param_eight',
                 'setter' => 'setParamEight',
                 'getter' => 'getParamEight',
                 'property' => 'paramEight',
-            ),
-            array(
+            ],
+            [
                 'param' => 'param_NINe',
                 'accepted_param' => 'param_n_i_ne',
                 'setter' => 'setParamNINe',
                 'getter' => 'getParamNINe',
                 'property' => 'paramNINe',
-            ),
-        );
+            ],
+        ];
     }
 
     public function provideInvalidProperties()
     {
-        return array(
-            array(
-                'params' => array(
+        return [
+            [
+                'params' => [
                     '_beginningWithUnderscore',
-                ),
-            ),
-            array(
-                'params' => array(
+                ],
+            ],
+            [
+                'params' => [
                     'underscore_in_the_middle',
-                ),
-            ),
-            array(
-                'params' => array(
+                ],
+            ],
+            [
+                'params' => [
                     'endingWithUnderscore_',
-                ),
-            ),
-            array(
-                'params' => array(
+                ],
+            ],
+            [
+                'params' => [
                     'param',
-                ),
-            ),
-            array(
-                'params' => array(
+                ],
+            ],
+            [
+                'params' => [
                     'params',
-                ),
-            ),
-            array(
-                'params' => array(
+                ],
+            ],
+            [
+                'params' => [
                     'fromArray',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -125,13 +125,13 @@ class GenericCommandTest extends TestCase
     public function testParamsCanBeSet($param, $acceptedParam, $setter, $getter, $property)
     {
         /** @var GenericCommand $command */
-        $command = $this->getCommand(array($property));
+        $command = $this->getCommand([$property]);
 
         $this->assertTrue(is_array($command->getParams()));
         $this->assertCount(0, $command->getParams());
 
-        $params = array($param => 1);
-        $expectedParams = array($acceptedParam => 1);
+        $params = [$param => 1];
+        $expectedParams = [$acceptedParam => 1];
 
         $command->setParams($params);
 
@@ -200,7 +200,7 @@ class GenericCommandTest extends TestCase
 
         /** @var GenericCommand $command */
         $command = $this->getCommand();
-        $command->setParams(array('unsupported_param' => 'value'));
+        $command->setParams(['unsupported_param' => 'value']);
     }
 
     public function testEmptyParamLeadsToException()
@@ -216,7 +216,7 @@ class GenericCommandTest extends TestCase
      * @param array $properties
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getCommand($properties = array())
+    protected function getCommand($properties = [])
     {
         $command = $this->getMockBuilder(GenericCommand::CLASS)
             ->disableOriginalConstructor()

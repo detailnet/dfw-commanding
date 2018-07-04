@@ -4,7 +4,7 @@ namespace Detail\Commanding\Command\Listing;
 
 class Sort
 {
-    const DIRECTION_ASCENDING  = 'asc';
+    const DIRECTION_ASCENDING = 'asc';
     const DIRECTION_DESCENDING = 'desc';
 
     /**

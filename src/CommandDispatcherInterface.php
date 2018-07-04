@@ -19,11 +19,4 @@ interface CommandDispatcherInterface
      * @return mixed
      */
     public function dispatch(CommandInterface $command);
-
-    /**
-     * @param CommandInterface $command
-     * @return mixed
-     * @deprecated Use dispatch()
-     */
-    public function handle(CommandInterface $command);
 }

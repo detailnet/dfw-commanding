@@ -21,7 +21,7 @@ abstract class GenericCommand implements
      *
      * @var array
      */
-    private $modifiedParams = array();
+    private $modifiedParams = [];
 
     /**
      * The snake case names/keys of the accepted params.
@@ -54,7 +54,7 @@ abstract class GenericCommand implements
             );
         }
 
-        $sanitizedParams = array();
+        $sanitizedParams = [];
 
         // First we need to sanitize the params
         foreach ($params as $key => $value) {
@@ -71,7 +71,7 @@ abstract class GenericCommand implements
             $this->setParam($key, null);
         }
 
-        $this->modifiedParams = array();
+        $this->modifiedParams = [];
 
         // ...and actually setting the new values.
         foreach ($sanitizedParams as $key => $value) {
@@ -84,7 +84,7 @@ abstract class GenericCommand implements
      */
     public function getParams()
     {
-        $params = array();
+        $params = [];
 
         foreach ($this->getModifiedParams() as $key) {
             $params[$key] = $this->getParam($key);
@@ -167,7 +167,7 @@ abstract class GenericCommand implements
         // - getName => name
         // - setProductGroups => product_groups
 
-        $supportedMethods = array(self::CALL_GET, self::CALL_SET);
+        $supportedMethods = [self::CALL_GET, self::CALL_SET];
         $supportedMethod = null;
         $camelCaseKey = null;
 
@@ -335,7 +335,7 @@ abstract class GenericCommand implements
     private function initAcceptedParams()
     {
         $command = new ReflectionObject($this);
-        $keys = array();
+        $keys = [];
 
         // We're ignoring private properties because we can't set a for it value anyway...
         $properties = $command->getProperties(
@@ -354,7 +354,7 @@ abstract class GenericCommand implements
             $sanitizedPropertyName = $this->sanitizePropertyName($propertyName);
 
             if ($sanitizedPropertyName !== $propertyName
-                || in_array($propertyName, array('param', 'params', 'fromArray'))
+                || in_array($propertyName, ['param', 'params', 'fromArray'])
             ) {
                 throw new Exception\RuntimeException(
                     sprintf(

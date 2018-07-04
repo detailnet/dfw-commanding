@@ -45,14 +45,4 @@ trait CommandDispatcherAwareTrait
 
         return $commandDispatcher->dispatch($command);
     }
-
-    /**
-     * @param CommandInterface $command
-     * @return mixed
-     * @deprecated Use dispatchCommand()
-     */
-    protected function handleCommand(CommandInterface $command)
-    {
-        return $this->dispatchCommand($command);
-    }
 }
