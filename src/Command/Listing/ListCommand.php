@@ -15,12 +15,12 @@ abstract class ListCommand implements
     /**
      * @var Filter[]
      */
-    protected $filter = array();
+    protected $filter = [];
 
     /**
      * @var Sort[]
      */
-    protected $sort = array();
+    protected $sort = [];
 
     /**
      * @var int
@@ -40,8 +40,8 @@ abstract class ListCommand implements
     {
         return new static(
             isset($params['query']) ? $params['query'] : null,
-            isset($params['filter']) ? $params['filter'] : array(),
-            isset($params['sort']) ? $params['sort'] : array(),
+            isset($params['filter']) ? $params['filter'] : [],
+            isset($params['sort']) ? $params['sort'] : [],
             isset($params['limit']) ? $params['limit'] : null,
             isset($params['offset']) ? $params['offset'] : null
         );
@@ -54,7 +54,7 @@ abstract class ListCommand implements
      * @param int $limit
      * @param int $offset
      */
-    public function __construct($query = null, array $filter = array(), array $sort = array(), $limit = null, $offset = null)
+    public function __construct($query = null, array $filter = [], array $sort = [], $limit = null, $offset = null)
     {
         if ($query !== null) {
             $this->setQuery($query);

@@ -9,15 +9,15 @@ use Detail\Commanding\Exception;
 
 class Filter
 {
-    const OPERATOR_SMALLER_THAN           = '<';
+    const OPERATOR_SMALLER_THAN = '<';
     const OPERATOR_SMALLER_THAN_OR_EQUALS = '<=';
-    const OPERATOR_EQUALS                 = '=';
+    const OPERATOR_EQUALS = '=';
     const OPERATOR_GREATER_THAN_OR_EQUALS = '>=';
-    const OPERATOR_GREATER_THAN           = '>';
-    const OPERATOR_NOT_EQUALS             = '!=';
-    const OPERATOR_IN                     = 'in';
-    const OPERATOR_NOT_IN                 = 'notIn';
-    const OPERATOR_LIKE                   = 'like';
+    const OPERATOR_GREATER_THAN = '>';
+    const OPERATOR_NOT_EQUALS = '!=';
+    const OPERATOR_IN = 'in';
+    const OPERATOR_NOT_IN = 'notIn';
+    const OPERATOR_LIKE = 'like';
 
     /**
      * @var string
@@ -44,14 +44,14 @@ class Filter
      */
     protected static function getSupportedTypes()
     {
-        return array(
-            'boolean' => array('bool', 'boolean'),
-            'integer' => array('int', 'digit', 'integer'),
-            'float' => array('float', 'decimal', 'double', 'real'),
-            'string' => array('str', 'string', 'uuid'),
-            'array' => array('array', 'hash'),
-            'date' => array('date', 'datetime'),
-        );
+        return [
+            'boolean' => ['bool', 'boolean'],
+            'integer' => ['int', 'digit', 'integer'],
+            'float' => ['float', 'decimal', 'double', 'real'],
+            'string' => ['str', 'string', 'uuid'],
+            'array' => ['array', 'hash'],
+            'date' => ['date', 'datetime'],
+        ];
     }
 
     /**
